@@ -1,4 +1,4 @@
-module reto-2/gateway
+module asalaza5-st0263/reto-2/gateway
 
 go 1.18
 

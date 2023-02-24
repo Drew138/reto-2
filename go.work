@@ -1,0 +1,7 @@
+go 1.18
+
+use (
+	./reto-2/gateway
+	./reto-2/microservice-1
+	./reto-2/microservice-2
+)

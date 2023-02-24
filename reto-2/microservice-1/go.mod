@@ -1,4 +1,4 @@
-module reto-2/microservice-1
+module asalaza5-st0263/reto-2/microservice-1
 
 go 1.18
 
