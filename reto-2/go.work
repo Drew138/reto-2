@@ -1,0 +1,7 @@
+go 1.18
+
+use (
+	./gateway
+	./microservice-1
+	./microservice-2
+)

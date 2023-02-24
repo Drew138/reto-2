@@ -1,0 +1,21 @@
+syntax = "proto3";
+option go_package = "proto/files/;files";
+
+message FileListRequest {}
+
+message FileListResponse {
+    repeated string files = 1;
+}
+
+message FileSearchRequest {
+    string query = 1;
+}
+
+message FileSearchResponse {
+    repeated string files = 1;
+}
+
+service FileService {
+	rpc ListFiles(FileListRequest) returns (FileListResponse) {};
+	rpc SearchFiles(FileSearchRequest) returns (FileSearchResponse) {};
+}

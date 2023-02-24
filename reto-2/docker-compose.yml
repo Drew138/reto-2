@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  gateway:
+    build:
+      context: ./gateway
+    command: air
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    env_file:
+      - ./gateway/.env
+      - ./microservice-1/.env
+      - ./microservice-2/.env
+    volumes:
+      - ./gateway:/app
+    networks:
+      - reto-2
+    depends_on:
+      - rabbitmq
+
+  microservice-1:
+    build:
+      context: ./microservice-1
+    command: air
+    env_file:
+      - ./microservice-1/.env
+    volumes:
+      - ./microservice-1:/app
+    networks:
+      - reto-2
+    depends_on:
+      - gateway
+
+  microservice-2:
+    build:
+      context: ./microservice-2
+    command: air
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+    env_file:
+      - ./microservice-2/.env
+    volumes:
+      - ./microservice-2:/app
+    networks:
+      - reto-2
+    depends_on:
+      - gateway
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    expose:
+      - 5672
+    ports:
+      - 15672:15672
+    volumes:
+      - ./rabbitmq/rabbitmq-definitions.json:/etc/rabbitmq/definitions.json
+    networks:
+      - reto-2
+
+networks:
+  reto-2:
