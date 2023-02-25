@@ -1,25 +1,24 @@
 package handler
 
 import (
+	files "asalaza5-st0263/reto-2/gateway/internal/proto/files"
+	"asalaza5-st0263/reto-2/gateway/internal/rabbitmq"
 	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
-	"os"
-	files "reto-2/gateway/internal/proto/files"
-	"reto-2/gateway/internal/rabbitmq"
-	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 )
 
 type Handler struct {
 	client          files.FileServiceClient
-	rabbitmqService *rabbitmq.ServiceAMQP
+	rabbitmqService *rabbitmq.RabbitMQService
 }
 
-func NewHanlder(conn *grpc.ClientConn, rabbitmqService *rabbitmq.ServiceAMQP) *Handler {
+func NewHanlder(conn *grpc.ClientConn, rabbitmqService *rabbitmq.RabbitMQService) *Handler {
 	fileServiceClient := files.NewFileServiceClient(conn)
 	return &Handler{client: fileServiceClient, rabbitmqService: rabbitmqService}
 }
@@ -28,6 +27,8 @@ var count = 0
 
 func (h *Handler) ListFiles() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		count++
+		count %= 2
 		if count == 0 {
 			response, err := h.client.ListFiles(context.Background(), &files.FileListRequest{})
 			if err != nil {
@@ -36,27 +37,46 @@ func (h *Handler) ListFiles() gin.HandlerFunc {
 				c.JSON(http.StatusOK, gin.H{"response": response.Files, "type": "rpc"})
 			}
 		} else {
-
+			queueName := uuid.New().String()
 			request := struct {
-				Name  string `json:"name"`
-				Query string `json:"query"`
-			}{Name: "list"}
+				Name      string `json:"name"`
+				Query     string `json:"query"`
+				QueueName string `json:"queue_name"`
+			}{Name: "list", QueueName: queueName}
 
 			body := &bytes.Buffer{}
 			enc := json.NewEncoder(body)
 			enc.Encode(request)
-			h.rabbitmqService.Publish(body.Bytes())
-			response := <-h.rabbitmqService.C
+			h.rabbitmqService.Publish(body.Bytes(), queueName)
+			channel, err := h.rabbitmqService.Receive(queueName)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			msg := <-channel
+			_, err = h.rabbitmqService.Channel.QueueDelete(queueName, false, false, false)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+				return
+			}
+			var response []string
+
+			err = json.Unmarshal(msg.Body, &response)
+
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 
 			c.JSON(http.StatusOK, gin.H{"response": response, "type": "mom"})
 		}
-		count++
-		count %= 2
 	}
 }
 
 func (h *Handler) SearchFiles() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		count++
+		count %= 2
 		if count == 0 {
 			query := c.Query("query")
 			response, err := h.client.SearchFiles(context.Background(), &files.FileSearchRequest{Query: query})
@@ -67,44 +87,38 @@ func (h *Handler) SearchFiles() gin.HandlerFunc {
 			}
 		} else {
 			query := c.Query("query")
+			queueName := uuid.New().String()
 			request := struct {
-				Name  string `json:"name"`
-				Query string `json:"query"`
-			}{Name: "search", Query: query}
+				Name      string `json:"name"`
+				Query     string `json:"query"`
+				QueueName string `json:"queue_name"`
+			}{Name: "search", Query: query, QueueName: queueName}
 
 			body := &bytes.Buffer{}
 			enc := json.NewEncoder(body)
 			enc.Encode(request)
-			h.rabbitmqService.Publish(body.Bytes())
-			response := <-h.rabbitmqService.C
+			h.rabbitmqService.Publish(body.Bytes(), queueName)
+			channel, err := h.rabbitmqService.Receive(queueName)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			msg := <-channel
+			_, err = h.rabbitmqService.Channel.QueueDelete(queueName, false, false, false)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+				return
+			}
+			var response []string
+
+			err = json.Unmarshal(msg.Body, &response)
+
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
 
 			c.JSON(http.StatusOK, gin.H{"response": response, "type": "mom"})
 		}
-		count++
-		count %= 2
 	}
-}
-
-func listFiles(directory string) []string {
-	var files []string
-
-	dirEntries, _ := os.ReadDir(directory)
-	for _, file := range dirEntries {
-		files = append(files, file.Name())
-	}
-	return files
-}
-
-func searchFiles(directory, name string) []string {
-	files := listFiles(directory)
-	var ret []string
-	if name == "*" {
-		return files
-	}
-	for _, file := range files {
-		if strings.Contains(file, name) {
-			ret = append(ret, file)
-		}
-	}
-	return ret
 }

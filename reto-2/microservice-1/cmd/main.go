@@ -1,12 +1,12 @@
 package main
 
 import (
+	files "asalaza5-st0263/reto-2/microservice-1/internal/proto/files"
 	"context"
 	"fmt"
 	"log"
 	"net"
 	"os"
-	files "reto-2/microservice-1/internal/proto/files"
 	"strings"
 
 	"google.golang.org/grpc"
@@ -21,14 +21,12 @@ type FileServiceServer struct {
 func (f *FileServiceServer) ListFiles(ctx context.Context, _ *files.FileListRequest) (*files.FileListResponse, error) {
 	dirFiles := listFiles(f.directory)
 	r := files.FileListResponse{Files: dirFiles}
-	fmt.Println()
 	return &r, nil
 }
 
 func (f *FileServiceServer) SearchFiles(ctx context.Context, req *files.FileSearchRequest) (*files.FileSearchResponse, error) {
 	filteredFiles := searchFiles(f.directory, req.Query)
 	r := files.FileSearchResponse{Files: filteredFiles}
-	fmt.Println(filteredFiles)
 	return &r, nil
 }
 

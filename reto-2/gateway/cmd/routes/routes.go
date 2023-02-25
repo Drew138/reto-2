@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"reto-2/gateway/cmd/handler"
-	"reto-2/gateway/internal/rabbitmq"
+	"asalaza5-st0263/reto-2/gateway/cmd/handler"
+	"asalaza5-st0263/reto-2/gateway/internal/rabbitmq"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -15,10 +15,10 @@ type Router interface {
 type router struct {
 	eng             *gin.Engine
 	grpcConn        *grpc.ClientConn
-	rabbitmqService *rabbitmq.ServiceAMQP
+	rabbitmqService *rabbitmq.RabbitMQService
 }
 
-func NewRouter(eng *gin.Engine, grpcConn *grpc.ClientConn, rabbitmqService *rabbitmq.ServiceAMQP) Router {
+func NewRouter(eng *gin.Engine, grpcConn *grpc.ClientConn, rabbitmqService *rabbitmq.RabbitMQService) Router {
 	return &router{eng: eng, grpcConn: grpcConn, rabbitmqService: rabbitmqService}
 }
 

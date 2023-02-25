@@ -1,8 +1,8 @@
 {
-  "rabbit_version": "3.8.19",
-  "rabbitmq_version": "3.8.19",
+  "rabbit_version": "3.8.34",
+  "rabbitmq_version": "3.8.34",
   "product_name": "RabbitMQ",
-  "product_version": "3.8.19",
+  "product_version": "3.8.34",
   "users": [
     {
       "name": "guest",
@@ -12,11 +12,7 @@
       "limits": {}
     }
   ],
-  "vhosts": [
-    {
-      "name": "/"
-    }
-  ],
+  "vhosts": [{ "name": "/" }],
   "permissions": [
     {
       "user": "guest",
@@ -37,13 +33,11 @@
   "policies": [],
   "queues": [
     {
-      "name": "test",
+      "name": "request",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
-      "arguments": {
-        "x-queue-type": "classic"
-      }
+      "arguments": { "x-queue-type": "classic" }
     }
   ],
   "exchanges": [],

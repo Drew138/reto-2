@@ -1,65 +1,47 @@
 package main
 
 import (
+	"asalaza5-st0263/reto-2/microservice-2/internal/files"
 	"bytes"
-	"context"
 	"encoding/json"
 	"log"
 	"os"
-	"strings"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-type request struct {
-	Name  string `json:"name"`
-	Query string `json:"query"`
+type Request struct {
+	Name      string `json:"name"`
+	Query     string `json:"query"`
+	QueueName string `json:"queue_name"`
 }
 
-func listFiles(directory string) []string {
-	var files []string
-
-	dirEntries, _ := os.ReadDir(directory)
-	for _, file := range dirEntries {
-		files = append(files, file.Name())
-	}
-	return files
-}
-
-func searchFiles(directory, name string) []string {
-	files := listFiles(directory)
-	var ret []string
-	if name == "*" {
-		return files
-	}
-	for _, file := range files {
-		if strings.Contains(file, name) {
-			ret = append(ret, file)
-		}
-	}
-	return ret
-}
-
-func requestHandler(body []byte, directory string) []string {
-	var req request
-	err := json.Unmarshal(body, &req)
-	if err != nil {
-		return []string{err.Error()}
-	}
-	if req.Name == "list" {
-		return listFiles(directory)
-	} else if req.Name == "search" {
-		return searchFiles(directory, req.Query)
+func parseRequest(request Request, directory string, ch *amqp.Channel) []string {
+	if request.Name == "list" {
+		return files.ListFiles(directory)
+	} else if request.Name == "search" {
+		return files.SearchFiles(directory, request.Query)
 	} else {
 		return []string{"Invalid request"}
 	}
 }
 
-func publish(responseQueue amqp.Queue, ch *amqp.Channel, body []byte) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	err := ch.PublishWithContext(ctx,
+func publish(request Request, channel *amqp.Channel, body []byte) error {
+	args := make(amqp.Table)
+	args["x-expires"] = int32(20000)
+	responseQueue, err := channel.QueueDeclare(
+		request.QueueName, // name
+		false,             // durable
+		true,              // delete when unused
+		false,             // exclusive
+		false,             // no-wait
+		args,              // arguments
+	)
+	if err != nil {
+		return err
+	}
+	err = channel.Publish(
 		"",                 // exchange
 		responseQueue.Name, // routing key
 		false,              // mandatory
@@ -73,37 +55,31 @@ func publish(responseQueue amqp.Queue, ch *amqp.Channel, body []byte) error {
 }
 
 func main() {
+	time.Sleep(8 * time.Second)
 	rabbitmqURL := os.Getenv("RABBITMQ_URL")
+	directory := os.Getenv("MICROSERVICE_TWO_DIRECTORY")
+
 	amqpConn, err := amqp.Dial(rabbitmqURL)
 	if err != nil {
 		panic(err)
 	}
 	defer amqpConn.Close()
-	ch, err := amqpConn.Channel()
-	requestQueue, err := ch.QueueDeclare(
-		"request", // name
-		false,     // durable
-		false,     // delete when unused
-		false,     // exclusive
-		false,     // no-wait
-		nil,       // arguments
+
+	channel, err := amqpConn.Channel()
+	requestQueue, err := channel.QueueDeclare(
+		"request",
+		true,
+		false,
+		false,
+		false,
+		nil,
 	)
-	if err != nil {
-		panic(err)
-	}
-	responseQueue, err := ch.QueueDeclare(
-		"response", // name
-		false,      // durable
-		false,      // delete when unused
-		false,      // exclusive
-		false,      // no-wait
-		nil,        // arguments
-	)
+
 	if err != nil {
 		panic(err)
 	}
 
-	messages, err := ch.Consume(
+	messages, err := channel.Consume(
 		requestQueue.Name, // queue
 		"",                // consumer
 		true,              // auto-ack
@@ -112,16 +88,22 @@ func main() {
 		false,             // no-wait
 		nil,               // args
 	)
+
 	if err != nil {
 		panic(err)
 	}
-	directory := os.Getenv("MICROSERVICE_TWO_DIRECTORY")
+
 	for msg := range messages {
-		l := requestHandler(msg.Body, directory)
+		var request Request
+		err := json.Unmarshal(msg.Body, &request)
+		if err != nil {
+			continue
+		}
+
+		dirFiles := parseRequest(request, directory, channel)
 		body := &bytes.Buffer{}
 		enc := json.NewEncoder(body)
-		enc.Encode(l)
-		err = publish(responseQueue, ch, body.Bytes())
+		enc.Encode(dirFiles)
+		err = publish(request, channel, body.Bytes())
 	}
-
 }

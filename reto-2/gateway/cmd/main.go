@@ -1,16 +1,17 @@
 package main
 
 import (
+	"asalaza5-st0263/reto-2/gateway/cmd/routes"
+	"asalaza5-st0263/reto-2/gateway/internal/client"
+	"asalaza5-st0263/reto-2/gateway/internal/rabbitmq"
 	"os"
-	"reto-2/gateway/cmd/routes"
-	"reto-2/gateway/internal/client"
-	"reto-2/gateway/internal/rabbitmq"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-
+	time.Sleep(10 * time.Second)
 	port := os.Getenv("GATEWAY_PORT")
 	// ip := os.Getenv("GATEWAY_IP")
 	rabbitmqURL := os.Getenv("RABBITMQ_URL")
@@ -25,16 +26,11 @@ func main() {
 	}
 	defer grpcConn.Close()
 
-	// amqpConn, err := amqp.Dial(rabbitmqURL)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// defer amqpConn.Close()
 	rabbitmqService, err := rabbitmq.Setup(rabbitmqURL)
 	if err != nil {
 		panic(err)
 	}
-	defer rabbitmqService.Conn.Close()
+	defer rabbitmqService.Connection.Close()
 
 	router := routes.NewRouter(eng, grpcConn, rabbitmqService)
 	router.MapRoutes()
