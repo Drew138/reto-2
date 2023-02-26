@@ -1,30 +1,17 @@
 https://github.com/st0263eafit/st0263-231
 
-# info de la materia: ST02363 <nombre>
+# ST02363 Tópicos Especiales en Telemática
 
-#
+# Estudiante(s): Andrés Salazar Galeano, asalaza5@eafit.edu.co
 
-# Estudiante(s): nombre, email-eafit
+# Profesor: Edwin Nelson Montoya Munera, emontoya@eafit.edu.co
 
-#
+# Reto 2
 
-# Profesor: nombre, email-eafit
-
-#
-
-# <para borrar: EL OBJETIVO DE ESTA DOCUMENTACÍON ES QUE CUALQUIER LECTOR CON EL REPO, EN ESPECIAL EL PROFESOR, ENTIENDA EL ALCANCE DE LO DESARROLLADO Y QUE PUEDA REPRODUCIR SIN EL ESTUDIANTE EL AMBIENTE DE DESARROLLO Y EJECUTAR Y USAR LA APLICACIÓN SIN PROBLEMAS>
-
-# <para borrar: renombre este archivo a README.md cuando lo vaya a usar en un caso específico>
-
-# nombre del proyecto, lab o actividad
-
-#
-
-# 1. breve descripción de la actividad
-
-#
+# 1. Breve descripción de la actividad
 
 <texto descriptivo>
+
 ## 1.1. Que aspectos cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
 
 ## 1.2. Que aspectos NO cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
@@ -33,11 +20,49 @@ https://github.com/st0263eafit/st0263-231
 
 # 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
+Este projecto fue desarrollado utilizando las siguientes tectonologias:
+
+- GO para desarrollo de ambos microservicios, y gateway.
+- Docker para conteinerizar cada uno de los servicios.
+- Docker Compose para orquestrar los contenedores.
+- RabbitMQ como message broker entre el gateway y el microservicio 2.
+- Protocol Buffers .
+- Protoc Compiler para generar implementaciones de codigo gRPC en GO.
+- Makefile CLI para facilitar instalaciones necesarias.
+
+
 ## como se compila y ejecuta.
+
+```bash
+sudo apt update
+sudo apt install docker.io -y
+sudo apt install docker-compose -y
+sudo apt install git -y
+
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -a -G docker ubuntu
+```
+
+```
+
+```
 
 ## detalles del desarrollo.
 
 ## detalles técnicos
+
+```mermaid
+graph LR;
+A(Client) --> B;
+B(Gateway API) -->|RPC| C;
+B --> D;
+D(MOM) --> E;
+C(Microservice 1) --> B
+E(Microservice 2) --> D
+D --> B
+
+```
 
 ## descripción y como se configura los parámetros del proyecto (ej: ip, puertos, conexión a bases de datos, variables de ambiente, parámetros, etc)
 
