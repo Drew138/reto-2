@@ -60,7 +60,7 @@ Tanto la ruta de `/list` como la ruta de `/search` responden en este formato.
 ## 1.2. Que aspectos NO cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
 
 - [ ] Despliegue de cada microservicio en una maquina virtual dedicada.
-- [ ] Utilizacion de ips como parametros (se utilizaron hosts en su lugar debido a que se implemento `docker-compose`).
+- [ ] Utilizacion de ips como parametros (se utilizaron hosts en su lugar debido a que se implemento `docker-compose`, sin embargo si cada microservicio es desplegado en una maquina virtual deicada, pasar una ip debe funcionar igualmente).
 
 # 2. información general de diseño de alto nivel, arquitectura, patrones, mejores prácticas utilizadas.
 
