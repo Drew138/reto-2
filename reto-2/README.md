@@ -125,7 +125,7 @@ Dada utilizando MOM. Los mensajes transferidos entre ambos componentes se dan en
   "queue_name": "queue_name"
 }
 ```
-Los campos `name` y `query` son utilizados para el procesamiento de la peticion entrante, y el campo `queue_name` se utiliza inicialmente, en el cliente para crear una cola temporal por la cual se recibiran los mensajes. Una vez la peticion sea procesada en el microservicio dos, este devolvera la lista de archivos deseados al gateway sobre la cola temporal. Cuando el gateway recibe la respuesta, este mismo se encarga de borrala de manera que no gaten recursos innecesariamente.
+Los campos `name` y `query` son utilizados para el procesamiento de la peticion entrante, y el campo `queue_name` se utiliza inicialmente, en el cliente para crear una cola temporal por la cual se recibiran los mensajes. Una vez la peticion sea procesada en el microservicio dos, este devolvera la lista de archivos deseados al gateway sobre la cola temporal. Cuando el gateway recibe la respuesta, este mismo se encarga de borrala de manera que no se gasten recursos innecesariamente.
 
 Por otro lado, el response enviado por la cola temporal contiene el siguiente formato:
 
