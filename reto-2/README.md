@@ -1,5 +1,3 @@
-https://github.com/st0263eafit/st0263-231
-
 # ST02363 Tópicos Especiales en Telemática
 
 # Estudiante(s): Andrés Salazar Galeano, asalaza5@eafit.edu.co
