@@ -60,7 +60,6 @@ Tanto la ruta de `/list` como la ruta de `/search` responden en este formato.
 ## 1.2. Que aspectos NO cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
 
 - [ ] Despliegue de cada microservicio en una maquina virtual dedicada.
-- [ ] Utilizacion de ips como parametros (se utilizaron hosts en su lugar debido a que se implemento `docker-compose`, sin embargo si cada microservicio es desplegado en una maquina virtual dedicada, pasar una ip debe funcionar igualmente).
 
 # 2. información general de diseño de alto nivel, arquitectura, patrones, mejores prácticas utilizadas.
 
@@ -281,7 +280,8 @@ En esta se realizan los siguientes pasos:
 1. Se utiliza una imagen base de docker que contiene el lenguaje de programacion Go.
 2. Se descargan utilidades basicas como git.
 3. Se realiza la instalacion del CLI `air` el cual permite realizar "hot reload" sobre las aplicaciones para facilitar el desarrollo.
-4. Se descargan los paquetes necesarios utilizados por la aplicacion.
+4. Se copian todos los archivos de la aplicacion.
+5. Se descargan los paquetes necesarios utilizados.
 
 En el caso de rabbitmq, se utiliza la imagen oficial para el desarrollo, y se define un archivo de configuraciones que permite predefinir en este ejercicio una cola llamada `requests` que sera utilizada para comunicacion entre el gateway y el microservicio 2.
 
@@ -302,6 +302,12 @@ Su definicion se realiza de  la siguiente manera en el archivo `asalaza5-st0263/
 
 ## detalles técnicos
 
+Para el desarrollo, y mantenimiento de la aplicacion es necesario contar con el lenguaje de programacion Go, el CLI `protoc` y exportar las siguientes variable de entorno en un `.bashrc`, `.zshrc` o similares:
+
+```bash
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+```
 
 
 ## descripción y como se configura los parámetros del proyecto (ej: ip, puertos, conexión a bases de datos, variables de ambiente, parámetros, etc)
@@ -342,25 +348,30 @@ En el caso de estos microservicios no se desarrollo en una carpeta `pkg` ya que 
 
 # 4. Descripción del ambiente de EJECUCIÓN (en producción) lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
-Debido a que el desarrollo del proyecto se dio utilizando `docker-compose`, el ambiente de ejecucion es identico al que se tiene en desarrollo. El unico cambio que se debe realizar, es habilitar los puertos en la maquina virtual que aloja el proyecto para permitir la comunicacion con el gateway, y el puerto para acceder al admin de rabbitmq de ser necesario.
+Debido a que el desarrollo del proyecto se dio utilizando `docker-compose`, el ambiente de ejecucion es identico al que se tiene en desarrollo. El unico cambio que se debe realizar, es habilitar los puertos en la maquina virtual que aloja el proyecto para permitir la comunicacion con el gateway, y el puerto para acceder al admin de rabbitmq de ser necesario. En el caso del componente gateway, se utilizan todos los arhivos de configuracion `.env`.
 
 # IP o nombres de dominio en nube o en la máquina servidor.
 
 ## una mini guia de como un usuario utilizaría el software o la aplicación
 
+Para interactuar con el componente gateway, se puede realizar una peticion utilizando la herramienta curl de la siguiente manera:
 
-# 5. otra información que considere relevante para esta actividad.
+- Listado de archivos:
+```
+curl -X GET "http://<host>:80/list"
+```
+
+- Busqueda de archivos:
+```
+curl -X GET "http://<host>:80/search?query=<query>"
+```
+
 
 # referencias:
 
-<debemos siempre reconocer los créditos de partes del código que reutilizaremos, así como referencias a youtube, o referencias bibliográficas utilizadas para desarrollar el proyecto o la actividad>
+- https://www.rabbitmq.com/tutorials/tutorial-one-go.html
+- https://grpc.io/docs/languages/go/basics/
 
-https://www.rabbitmq.com/tutorials/tutorial-one-go.html
 
-## sitio1-url
-
-## sitio2-url
-
-## url de donde tomo info para desarrollar este proyecto
 
 #### versión README.md -> 1.0 (2022-agosto)
