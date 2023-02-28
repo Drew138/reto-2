@@ -14,7 +14,5 @@ install:
 	@echo and \`\export \PATH\=$\PATH:$GOPATH/bin\`
 	@echo to your .bashrc file.
 
-rabbitmq:
-	@docker run rabbitmq:3.8-management-alpine -d -p 15672:15672 -p 5672:5672 \
-		-v ${PWD}/rabbitmq/rabbitmq-definitions.json:/etc/rabbitmq/definitions.json
+#https://get.golang.org/${{uname}}/go_installer
 
