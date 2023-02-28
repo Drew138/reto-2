@@ -60,7 +60,7 @@ Tanto la ruta de `/list` como la ruta de `/search` responden en este formato.
 ## 1.2. Que aspectos NO cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
 
 - [ ] Despliegue de cada microservicio en una maquina virtual dedicada.
-- [ ] Utilizacion de ips como parametros (se utilizaron hosts en su lugar debido a que se implemento `docker-compose`, sin embargo si cada microservicio es desplegado en una maquina virtual deicada, pasar una ip debe funcionar igualmente).
+- [ ] Utilizacion de ips como parametros (se utilizaron hosts en su lugar debido a que se implemento `docker-compose`, sin embargo si cada microservicio es desplegado en una maquina virtual dedicada, pasar una ip debe funcionar igualmente).
 
 # 2. información general de diseño de alto nivel, arquitectura, patrones, mejores prácticas utilizadas.
 
@@ -75,7 +75,66 @@ E(Microservice 2) --> D
 D --> B
 ```
 
+Desde un punto de vista de una arquitectura de alto nivel, el sistema se divide en 4 componentes principales:
 
+- Gateway.
+- Microservicio 1.
+- Microservicio 2.
+- MOM (implementado en RabbitMQ).
+
+### Comunicacion entre componentes:
+
+**Comunicacion Client - Gateway**:
+
+Dada a traves de una Rest API. Esta corre sobre el protocolo http, y mensajeria en formato JSON.
+
+**Comunicacion Gateway - Microservicio 1**:
+
+Dada por medio de gRPC. Ambos componentes comparten implementaciones de los servicios predefinidors. El gateway utiliza la implementacion de cliente para llamar los metodos remotamente, y el microservicio 1 utiliza la implementacion de servidor para ejecutar los metodos llamados y retornar la respuesta deseada.
+
+Los modelos de datos transmitidos fueron definidos de la siguiente manera en el archivo `files.proto`:
+
+```proto
+message FileListRequest {}
+
+message FileListResponse {
+    repeated string files = 1;  # list of files in response
+}
+
+message FileSearchRequest {
+    string query = 1; 
+}
+
+message FileSearchResponse {
+    repeated string files = 1;  # list of files in response
+}
+
+service FileService {
+	rpc ListFiles(FileListRequest) returns (FileListResponse) {};
+	rpc SearchFiles(FileSearchRequest) returns (FileSearchResponse) {};
+}
+```
+
+**Comunicacion Gateway - Microservicio 2**:
+
+Dada utilizando MOM. Los mensajes transferidos entre ambos componentes se dan en formato JSON. El componente gateway envia mensajes al microservicio 2 por medio del exchange por defecto que determina rabbitmq y en la cola `requests` definida en el archivo `asalaza5-st0263/reto-2/rabbitmq/rabbitmq-definitions.json`. El request enviado contiene el siguiente formato:
+
+```json
+{
+  "name": "name",
+  "query":"query",
+  "queue_name": "queue_name"
+}
+```
+Los campos `name` y `query` son utilizados para el procesamiento de la peticion entrante, y el campo `queue_name` se utiliza inicialmente, en el cliente para crear una cola temporal por la cual se recibiran los mensajes. Una vez la peticion sea procesada en el microservicio dos, este devolvera la lista de archivos deseados al gateway sobre la cola temporal. Cuando el gateway recibe la respuesta, este mismo se encarga de borrala de manera que no gaten recursos innecesariamente.
+
+Por otro lado, el response enviado por la cola temporal contiene el siguiente formato:
+
+```json
+{
+  "body": ["archivo-1.txt"]
+}
+```
 
 # 3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
@@ -85,7 +144,7 @@ Este projecto fue desarrollado utilizando las siguientes tectonologias:
 - Docker para conteinerizar cada uno de los servicios.
 - Docker Compose para orquestrar los contenedores.
 - RabbitMQ como message broker entre el gateway y el microservicio 2.
-- Protocol Buffers .
+- Protocol Buffers para la definicion de mensajeria y servicios desarrollados.
 - Protoc Compiler para generar implementaciones de codigo gRPC en Go.
 - Makefile CLI para facilitar instalaciones necesarias.
 
