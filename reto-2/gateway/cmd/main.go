@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	time.Sleep(10 * time.Second)
+	time.Sleep(60 * time.Second)
 	port := os.Getenv("GATEWAY_PORT")
 	// ip := os.Getenv("GATEWAY_IP")
 	rabbitmqURL := os.Getenv("RABBITMQ_URL")

@@ -55,7 +55,7 @@ func publish(request Request, channel *amqp.Channel, body []byte) error {
 }
 
 func main() {
-	time.Sleep(8 * time.Second)
+	time.Sleep(60 * time.Second)
 	rabbitmqURL := os.Getenv("RABBITMQ_URL")
 	directory := os.Getenv("MICROSERVICE_TWO_DIRECTORY")
 
