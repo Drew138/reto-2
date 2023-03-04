@@ -252,7 +252,7 @@ o alternativamente el siguiente comando para unicamente correrlo:
 ```bash
 make run
 ```
-una vez ejecutado se debe esperar 1 minuto para que el sistema comience correctamente.
+una vez ejecutado se debe esperar 1 minuto para que el sistema comience correctamente ya que rabbitmq tarde un poco para iniciar.
 
 ## detalles del desarrollo.
 
