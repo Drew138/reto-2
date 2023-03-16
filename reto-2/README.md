@@ -252,6 +252,7 @@ o alternativamente el siguiente comando para unicamente correrlo:
 ```bash
 make run
 ```
+una vez ejecutado se debe esperar 1 minuto para que el sistema comience correctamente ya que rabbitmq tarde un poco para iniciar.
 
 ## detalles del desarrollo.
 
@@ -350,18 +351,20 @@ Debido a que el desarrollo del proyecto se dio utilizando `docker-compose`, el a
 
 # IP o nombres de dominio en nube o en la máquina servidor.
 
+La maquina virtual en la que se desplego el proyecto cuenta con la siguiente ip elastica: `50.16.151.207`.
+
 ## una mini guia de como un usuario utilizaría el software o la aplicación
 
 Para interactuar con el componente gateway, se puede realizar una peticion utilizando la herramienta curl de la siguiente manera:
 
 - Listado de archivos:
 ```
-curl -X GET "http://<host>:80/list"
+curl -X GET "http://50.16.151.207:80/list"
 ```
 
 - Busqueda de archivos:
 ```
-curl -X GET "http://<host>:80/search?query=<query>"
+curl -X GET "http://50.16.151.207:80/search?query=<query>"
 ```
 
 
