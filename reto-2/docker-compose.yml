@@ -8,9 +8,9 @@ services:
     environment:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
     expose:
-      - 80
+      - 8000
     ports:
-      - 80:80
+      - 8000:80
     env_file:
       - ./gateway/.env
       - ./microservice-1/.env
