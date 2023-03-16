@@ -77,11 +77,11 @@ services:
 volumes:
   db_data:
   wp_data:
-    # driver: local
-    # driver_opts:
-    #   type: nfs
-    #   o: addr=192.168.1.100,nolock,soft,rw
-    #   device: ":/path/to/nfs/share"
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=34.171.171.237,nolock,soft,rw
+      device: "/share"
 
 networks:
   reto-3:
