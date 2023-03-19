@@ -41,6 +41,8 @@ services:
       MYSQL_PASSWORD: wordpress
     networks:
       - reto-3
+    ports:
+      - "3306:3306"
 
 volumes:
   db_data:
