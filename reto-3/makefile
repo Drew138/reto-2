@@ -1,4 +1,4 @@
-.PHONY: install create-certs renew-certs
+.PHONY: install create-certs renew-certs wordpress mysql nginx
 
 install:
 	@sudo apt-get update
