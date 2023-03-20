@@ -10,16 +10,12 @@ create-certs:
 renew-certs:
     @sudo certbot renew --dry-run
 
-make wordpress:
+wordpress:
 	@sudo docker-compose -f ./docker-compose.wordpress.yml up
 
-make mysql:
+mysql:
 	@sudo docker-compose -f ./docker-compose.mysql.yml up
 
-make nginx:
+nginx:
 	@sudo docker-compose -f ./docker-compose.nginx.yml up
 
-make clean:
-	@sudo docker-compose down --volumes
-	@sudo docker container prune -y
-	@sudo docker image prune -y
