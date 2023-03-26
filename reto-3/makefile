@@ -11,13 +11,13 @@ renew-certs:
 	@sudo certbot renew --dry-run
 
 wordpress:
-	@sudo docker-compose -f ./docker-compose.wordpress.yml up -d
+	@sudo docker-compose -f ./docker-compose.wordpress.yml up
 
 mysql:
-	@sudo docker-compose -f ./docker-compose.mysql.yml up -d
+	@sudo docker-compose -f ./docker-compose.mysql.yml up
 
 nginx:
-	@sudo docker-compose -f ./docker-compose.nginx.yml up -d
+	@sudo docker-compose -f ./docker-compose.nginx.yml up
 
 mount:
 	@mount 10.128.0.13:/var/nfs/general ./wp_data 

@@ -124,10 +124,11 @@ services:
 ```
 
 Como se puede observar, se mapean los puertos 80 y 443 para manejar conexiones http y https respectivamente. Adicionalmente, se mapean 3 volumenes:
+
 - Un volumen de configuracion de nginx el cual define su comportamiento.
 - Dos volumenes de llaves utilizadas para soportar conexiones seguras (https).
 
-El archivo de configuracion`./nginx/nginx.conf`  se define a continuacion.
+El archivo de configuracion`./nginx/nginx.conf` se define a continuacion.
 
 ```nginx
 events {
@@ -165,6 +166,7 @@ http {
 ```
 
 En este se especifican las siguientes caracteristicas del servidor:
+
 - Este actuara como load balancer utilizando round robin para los servidores con ips privadas `10.128.0.12` y `10.128.0.15` definidos como el upstream `wordpress_servers`.
 - Este escuchara en el puerto 80, y redireccionara las peticiones entrantes a utilizar https.
 - Este escuchara en el puerto 443, y redireccionara las peticiones al upstream `wordpress_servers`.
@@ -173,6 +175,7 @@ En este se especifican las siguientes caracteristicas del servidor:
 ###### Wordpress
 
 En el archivo `docker-compose.wordpress.yml` se define el servicio de nginx y algunos parametros pasados a este.
+
 ```yml
 version: "3.8"
 
@@ -191,6 +194,7 @@ services:
 ```
 
 Los paramentros definidos para este servicio son los siguientes:
+
 - Mapeo de puertos 80 (entre contenedor y maquina virtual).
 - Definicion de variables de entorno utilizadas para la base de datos.
 - Se utilizo una ip para el host de la base de datos ya que esta es estatica en la subred que define Google Cloud Platform (GCP).
@@ -199,6 +203,7 @@ Los paramentros definidos para este servicio son los siguientes:
 ###### MySQL
 
 En el archivo `docker-compose.mysql.yml` se define el servicio de nginx y algunos parametros pasados a este.
+
 ```yml
 version: "3.8"
 
@@ -221,6 +226,7 @@ volumes:
 ```
 
 Los paramentros definidos para este servicio son los siguientes:
+
 - Mapeo de puertos 3306 (entre contenedor y maquina virtual).
 - Definicion de variables de entorno utilizadas para la base de datos.
 - Mapeo de volumenes para guardar registros de la base de datos.
@@ -229,7 +235,7 @@ Los paramentros definidos para este servicio son los siguientes:
 
 # 4. Descripción del ambiente de desarrollo, lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
-El ambiente de desarrollo es identico al de produccion, con excepcion de que todos los servicios se manejaron en un unico `docker-compose.yml`, y que en el servicio de nginx se hicieron pequenos  cambios para que no utilizara https.
+El ambiente de desarrollo es identico al de produccion, con excepcion de que todos los servicios se manejaron en un unico `docker-compose.yml`, y que en el servicio de nginx se hicieron pequenos cambios para que no utilizara https.
 
 # IP o nombres de dominio en nube o en la máquina servidor.
 
@@ -239,4 +245,6 @@ El ambiente de desarrollo es identico al de produccion, con excepcion de que tod
 - `www.reto-3.reto-3-wordpress.site`
 
 # referencias:
-- https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-22-04 
+
+- https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-22-04
+
