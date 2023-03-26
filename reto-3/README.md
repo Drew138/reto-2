@@ -92,6 +92,12 @@ make nginx
 
 utilizado para correr el servicio de nginx.
 
+```bash
+make mount
+```
+
+utilizado para montar el directorio wp_data en los servidores de wordpress.
+
 ## detalles del desarrollo.
 
 Para el desarrollo inicial del proyecto se desarrollo unicamente un archivo `docker-compose`, sin embargo, debido a molestias que se presentaron durante el despliegue de cada uno de los contenedores.
