@@ -233,6 +233,8 @@ Los paramentros definidos para este servicio son los siguientes:
 
 ## opcional - detalles de la organización del código por carpetas o descripción de algún archivo. (ESTRUCTURA DE DIRECTORIOS Y ARCHIVOS IMPORTANTE DEL PROYECTO, comando 'tree' de linux)
 
+![image](https://user-images.githubusercontent.com/58788781/227811448-aee1c68f-6dc5-442a-aa78-f4baaf09069e.png)
+
 # 4. Descripción del ambiente de desarrollo, lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
 El ambiente de desarrollo es identico al de produccion, con excepcion de que todos los servicios se manejaron en un unico `docker-compose.yml`, y que en el servicio de nginx se hicieron pequenos cambios para que no utilizara https.
@@ -247,4 +249,3 @@ El ambiente de desarrollo es identico al de produccion, con excepcion de que tod
 # referencias:
 
 - https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-22-04
-
