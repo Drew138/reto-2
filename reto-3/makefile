@@ -19,3 +19,5 @@ mysql:
 nginx:
 	@sudo docker-compose -f ./docker-compose.nginx.yml up
 
+mount:
+	@mount 10.128.0.13:/var/nfs/general ./wp_data 
