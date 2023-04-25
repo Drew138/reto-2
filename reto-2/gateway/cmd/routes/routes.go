@@ -19,6 +19,7 @@ type router struct {
 }
 
 func NewRouter(eng *gin.Engine, grpcConn *grpc.ClientConn, rabbitmqService *rabbitmq.RabbitMQService) Router {
+
 	return &router{eng: eng, grpcConn: grpcConn, rabbitmqService: rabbitmqService}
 }
 
